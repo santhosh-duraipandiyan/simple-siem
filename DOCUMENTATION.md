@@ -236,19 +236,6 @@ SIEM believes it is an attack.
 
 ---
 
-## 5. Ideas for students to extend it
-
-- **Add a new log source** (DNS or VPN logs): write a format in the generator, a
-  matching regex in the normalizer, and a rule in the correlator.
-- **Add an "impossible travel" rule:** alert when the same user logs in from two
-  different countries within a short window.
-- **Persist alerts:** write them to a file or a dedicated Redis queue, then build
-  a tiny dashboard that reads them.
-- **Tune the thresholds down** and watch false positives appear — the real tuning
-  problem every security operations centre faces.
-
----
-
 > ⚠️ **This is a learning tool, not a production security product.** All logs are
 > synthetic and the detection logic is intentionally simplified so the core ideas
 > stay visible.
