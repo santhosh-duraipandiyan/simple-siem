@@ -1,0 +1,64 @@
+# One launch brings up the whole SIEM:  docker compose up --build
+#
+# 5 containers total:
+#   redis       - the "conveyor belt" (message queue) between stages
+#   generator   - simulated network devices producing raw logs
+#   collector   - STAGE 1: collection
+#   normalizer  - STAGE 2: normalization
+#   correlator  - STAGE 3: correlation & alerting
+#
+# All four Python services share ONE image (built from the single Dockerfile);
+# each just runs a different script via `command:`.
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: siem-redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  generator:
+    build: .
+    image: simple-siem:latest        # built once here, reused by the others
+    container_name: siem-generator
+    command: ["python", "-u", "generator.py"]
+    environment:
+      REDIS_HOST: redis
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  collector:
+    image: simple-siem:latest
+    container_name: siem-collector
+    command: ["python", "-u", "collector.py"]
+    environment:
+      REDIS_HOST: redis
+    depends_on:
+      redis:
+        condition: service_healthy
+      generator:
+        condition: service_started
+
+  normalizer:
+    image: simple-siem:latest
+    container_name: siem-normalizer
+    command: ["python", "-u", "normalizer.py"]
+    environment:
+      REDIS_HOST: redis
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  correlator:
+    image: simple-siem:latest
+    container_name: siem-correlator
+    command: ["python", "-u", "correlator.py"]
+    environment:
+      REDIS_HOST: redis
+    depends_on:
+      redis:
+        condition: service_healthy
