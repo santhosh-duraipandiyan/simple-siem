@@ -1,4 +1,4 @@
-# Simple SIEM — a teaching build
+# Simple SIEM 
 
 A tiny, console-based **SIEM** (Security Information and Event Management)
 system you can run on your laptop to *see* how the three core stages of a SIEM
@@ -140,17 +140,3 @@ simple-siem/
     └── correlator.py    # STAGE 3: correlation & alerting
 ```
 
----
-
-## Ideas for students to extend it
-
-- Add a new log source (e.g. DNS or VPN logs) — write a generator format, a
-  regex in the normalizer, and a rule in the correlator.
-- Add a rule: alert when the *same user* logs in from two different countries.
-- Write alerts to a file or a Redis "alerts" queue instead of the screen, and
-  build a tiny dashboard that reads them.
-- Lower the thresholds and watch how false positives appear — a real tuning
-  problem every SOC faces.
-
-> This is a learning tool, not a production security product. The logs are
-> fake and the detection is intentionally simple.
